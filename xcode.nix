@@ -1,4 +1,4 @@
-{pkgs}:
+{pkgs, symlinkBin ? false}:
 pkgs.stdenv.mkDerivation {
   pname = "xcode";
   version = "16.2";
@@ -23,10 +23,12 @@ pkgs.stdenv.mkDerivation {
   installPhase = ''
     mkdir -p $out/Applications
     cp -R Xcode.app $out/Applications/
-    mkdir -p $out/bin
-    # for tool in $out/Applications/Xcode.app/Contents/Developer/usr/bin/*; do
-    #   ln -s $tool $out/bin/
-    # done
+    ${if symlinkBin then ''
+      mkdir -p $out/bin
+      for tool in $out/Applications/Xcode.app/Contents/Developer/usr/bin/*; do
+        ln -s $tool $out/bin/
+      done
+    '' else ""}
     # for tool in xcodebuild simctl ibtool; do
     #   ln -s $out/Applications/Xcode.app/Contents/Developer/usr/bin/$tool $out/bin/
     # done
